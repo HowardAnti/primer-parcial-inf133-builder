@@ -61,7 +61,8 @@ class GameService:
     def __init__(self):
         self.builder = CharacterBuilder()
         self.game = Game(self.builder)
-
+        
+        
     def create_character(self, data):
         name = data.get("name", None)
         level = data.get("level", None)
@@ -85,9 +86,9 @@ class GameService:
     def read_characters(self):
         return {index: character.__dict__ for index, character in characters.items()}
     
-    def filter_character(self, nombre1, tipo1, nombre2, tipo2):
+    def filter_character(self, nombre, tipo, nombre1, tipo1, nombre2, tipo2):
         filter_characters={
-            index: character.__dict__ for index, character in characters.items() if character.__dict__[f"{nombre1}"]==tipo1 and character.__dict__[f"{nombre2}"]==tipo2
+            index: character.__dict__ for index, character in characters.items() if character.__dict__[f"{nombre}"]==tipo and character.__dict__[f"{nombre1}"]==tipo1 and character.__dict__[f"{nombre2}"]==tipo2
         }
         if filter_characters:
             return filter_characters
@@ -180,14 +181,19 @@ class GameHandler(BaseHTTPRequestHandler):
         if parsed_path.path == "/characters":
             response_data = self.controller.read_characters()
             HTTPDataHandler.handle_response(self, 200, response_data)
-        elif "role" in query_params and "charisma" in query_params:
+        elif parsed_path.path.startswith("/characters/") and not query_params:
+            id = int(self.path.split("/")[2])
+            response_data = self.controller.read_character(id)
+            HTTPDataHandler.handle_response(self, 200, {id: response_data.__dict__})
+        elif "level" in query_params and "role" in query_params and "charisma" in query_params:
+            level = int(query_params["level"][0])
             role = query_params["role"][0]
-            charisma = query_params["charisma"][0]
-            response_data = self.controller.filter_character("role", role, "charisma", charisma)
+            charisma = int(query_params["charisma"][0])
+            response_data = self.controller.filter_character("level", level, "role", role, "charisma", charisma)
             if response_data:
                 HTTPDataHandler.handle_response(self, 200, response_data)
             else:
-                HTTPDataHandler.handle_response(self, 202, {"message": f"ningun character con tales parametros {role} and {charisma}"})
+                HTTPDataHandler.handle_response(self, 202, {"message": f"ningun character con tales parametros"})
         else:
             HTTPDataHandler.handle_response(self, 404, {"Error": "Ruta no existente"})
 

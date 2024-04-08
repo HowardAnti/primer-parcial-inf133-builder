@@ -14,9 +14,6 @@ my_character = {
 response = requests.post(url, json=my_character, headers=headers)
 print(response.json())
 
-response = requests.get(url)
-print(response.json())
-
 my_character = {
     "name": "Robin",
     "level": 5,
@@ -31,7 +28,7 @@ print(response.json())
 my_character = {
     "name": "Howard",
     "level": 1,
-    "role": "Shield",
+    "role": "Archer",
     "charisma": 15,
     "strength": 50,
     "dexterity": 1
@@ -39,11 +36,18 @@ my_character = {
 response = requests.post(url, json=my_character, headers=headers)
 print(response.json())
 
+response = requests.get(url)
+print(response.json())
 
-urlp=url+"/?role=Archer&charisma=10"
+#urla=url+"/1"
+#response = requests.get(urla)
+#print(response.json())
+
+
+urlp=url+"/?role=Archer&level=5&charisma=10"
 
 response = requests.get(urlp)
-print("fdasfdsafdsafdsafd", response.json())
+print(response.json())
 
 
 update_character = {
@@ -54,9 +58,9 @@ update_character = {
 response = requests.put(url+"/2", json=update_character, headers=headers)
 print(response.json())
 
-
-response = requests.delete(url + "/3")
+response = requests.delete(url + "/1")
 print(response.json())
+
 
 my_character = {
     "name": "Legolas",
@@ -68,6 +72,7 @@ my_character = {
 }
 response = requests.post(url, json=my_character, headers=headers)
 print(response.json())
+
 
 
 response = requests.get(url)
